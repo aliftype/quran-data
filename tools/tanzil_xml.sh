@@ -1,10 +1,12 @@
 #!/bin/bash
 
+SRC=quran
+
 echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>"
 echo "<quran>"
 sura=1
-basmala=`head -n 1 001.txt`
-for i in *.txt; do
+basmala=`head -n 1 $SRC/001.txt`
+for i in $SRC/???.txt; do
     aya=1
 
 #    if [ $sura -eq 1 ]; then
