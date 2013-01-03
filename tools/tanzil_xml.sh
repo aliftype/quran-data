@@ -20,7 +20,7 @@ for i in $SRC/???.txt; do
     echo "<sura index=\"$sura\">"
     sura=`expr $sura + 1`
 
-    cat $i | sed -e 's/\(.*\) \xDB\x9D.*$/\1/' | while read l; do
+    cat $i | sed -e 's/\(.*\) *\xDB\x9D *[^ ]* *\( *.*\)$/\1\2/' | while read l; do
 	if [ $aya -eq 1 ]; then
 	    if [ $sura -eq 1 ]; then
 		echo "<aya index=\"$aya\" text=\"$l\" />"
