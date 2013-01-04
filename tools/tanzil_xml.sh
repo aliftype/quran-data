@@ -9,14 +9,6 @@ basmala=`head -n 1 $SRC/001.txt | sed -e 's/\(.*\) \xDB\x9D.*$/\1/'`
 for i in $SRC/???.txt; do
     aya=1
 
-#    if [ $sura -eq 1 ]; then
-
-#    elif [ $sura -eq 9 ]; then
-#	echo "<sura index=\"$sura\">"
-#    else
-#	echo $basmala
-#    fi
-
     echo "<sura index=\"$sura\">"
     sura=`expr $sura + 1`
 
