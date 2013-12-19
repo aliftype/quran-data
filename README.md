@@ -18,6 +18,6 @@ into other document formats.
 If you find any please, please report it.**
 
 Currently the text is best viewed using [Amiri Quran] font, as it has all the
-needed symbols are layout rules.
+needed symbols and layout rules.
 
 [Amiri Quran]: http://www.amirifont.org
