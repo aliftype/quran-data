@@ -9,6 +9,10 @@
 يظهر النص حاليا أنسب ما يكون مع خط [أميري قرآن][Amiri Quran]، إذ يحتوي على كل
 العلامات المطلوبة و قواعد تنضيدها الصحيحة.
 
+يعتمد هذه النص (و خط أميري قرآن) رسم مصحف الأزهر (المعروف أحيانًا بالمصحف الأميري،
+أو مصحف الحفاظ أو مصحف الاثني عشر سطرًا) في طبعته الرابعة المطبوعة المطبوعة عام
+١٣٨٨ ه‍.
+
 This repository contains Quran as UTF-8 encoded plain text files, following the
 best Unicode practices as possible (no more font specific hacks, no repurposing
 of totally unrelated code points and so one), plus some tools to convert it
