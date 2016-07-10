@@ -10,6 +10,8 @@ htmlTemplate = Template("""<html>
     body {
       direction: rtl;
       text-align: justify;
+      text-align-last: center;
+      -moz-text-align-last: center;
       width: 18em;
       margin: auto;
       font-family: Amiri Quran Colored;
