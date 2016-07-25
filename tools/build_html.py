@@ -6,6 +6,7 @@ from jinja2 import Template
 htmlTemplate = Template("""<html>
   <head>
     <meta charset="utf-8"/>
+    <title>{{name}}</title>
     <style>
     body {
       direction: rtl;
