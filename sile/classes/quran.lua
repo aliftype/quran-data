@@ -1,0 +1,169 @@
+local plain = SILE.require("classes/plain")
+local quran = plain { id = "quran", base = plain }
+if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
+SILE.scratch.suraHeaderPage = false
+
+function quran:singleColumnMaster()
+  self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
+    content = {left = "8.3%pw", right = "86%pw", top = "11.6%ph", bottom = "83.3%ph", direction = "RTL-TTB" },
+    folio = {left = "left(content)", right = "right(content)", top = "bottom(content)+3%ph", bottom = "bottom(content)+5%ph", direction = "RTL-TTB" },
+    runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%ph", bottom = "top(content)-3%ph" },
+  }})
+  self:defineMaster({ id = "left", firstContentFrame = "content", frames = {
+    content = {left = "14%pw", right = "91.7%pw", top = "11.6%ph", bottom = "83.3%ph", direction = "RTL-TTB" },
+    folio = {left = "left(content)", right = "right(content)", top = "bottom(content)+3%ph", bottom = "bottom(content)+5%ph", direction = "RTL-TTB" },
+    runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%ph", bottom = "top(content)-3%ph" },
+  }})
+end
+
+function quran:twoColumnMaster()
+  local gutterWidth = self.options.gutter or "3%pw"
+  self:defineMaster({ id = "right", firstContentFrame = "contentA", frames = {
+    title = {left = "left(contentA)", right = "right(contentB)", top="11.6%ph", height="0", bottom="top(contentA)", direction = "RTL-TTB" },
+    contentA = {left = "8.3%pw", right = "left(gutter)", top = "bottom(title)", bottom = "top(footnotesA)", next = "contentB", balanced = true, direction = "RTL-TTB" },
+    contentB = {left = "right(gutter)", width="width(contentA)", right = "86%pw", top = "bottom(title)", bottom = "top(contentB)", balanced = true, direction = "RTL-TTB" },
+    gutter = { left = "right(contentA)", right = "left(contentB)", width = gutterWidth, direction = "RTL-TTB" },
+    folio = {left = "left(contentA)", right = "right(contentB)", top = "bottom(contentB)+3%ph", bottom = "bottom(contentB)+5%ph", direction = "RTL-TTB" },
+    runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA)-8%ph", bottom = "top(contentA)-3%ph"},
+  }})
+  self:defineMaster({ id = "left", firstContentFrame = "contentA", frames = {
+    title = {left = "left(contentA)", right = "right(contentB)", top="11.6%ph", height="0", bottom="top(contentA)", direction = "RTL-TTB" },
+    contentA = {left = "14%pw", right = "left(gutter)", top = "bottom(title)", bottom = "top(footnotesA)", next = "contentB", balanced = true, direction = "RTL-TTB" },
+    contentB = {left = "right(gutter)", width="width(contentA)", right = "91.7%pw", top = "bottom(title)", bottom = "top(contentB)", balanced = true, direction = "RTL-TTB" },
+    gutter = { left = "right(contentA)", right = "left(contentB)", width = gutterWidth, direction = "RTL-TTB" },
+    folio = {left = "left(contentA)", right = "right(contentB)", top = "bottom(contentB)+3%ph", bottom = "bottom(contentB)+5%ph", direction = "RTL-TTB" },
+    runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA)-8%ph", bottom = "top(contentA)-3%ph"},
+  }})
+  -- Later we'll have an option for two fn frames
+  self:loadPackage("footnotes", { insertInto = "contentB", stealFrom = {"contentB"} } )
+  -- self:loadPackage("balanced-frames")
+end
+
+local _twocolumns
+quran.options.twocolumns = function (g)
+  if g then _twocolumns = g end
+  return _twocolumns
+end
+
+function quran:init()
+  self:loadPackage("masters")
+  self:loadPackage("infonode")
+  self:loadPackage("chapterverse")
+  SILE.registerCommand("format-reference", function (o,c)
+    SILE.typesetter:typeset("S"..c.c.."A"..c.v)
+  end)
+
+  if self.options.twocolumns() then
+    self:twoColumnMaster()
+    SILE.settings.set("linebreak.tolerance", 9000)
+  else
+    self:singleColumnMaster()
+  end
+  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
+  self.pageTemplate = SILE.scratch.masters["right"]
+  SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+  local p = plain.init(self)
+  return p
+end
+
+quran.newPage = function(self)
+  self:switchPage()
+  self:newPageInfo()
+  return plain.newPage(self)
+end
+
+quran.finish = function (self)
+  local r = plain.finish(self)
+  --quran:writeToc()
+  return r
+end
+
+quran.endPage = function(self)
+  if SILE.scratch.suraHeaderPage then
+    SILE.scratch.suraHeaderPage = false
+    return plain.endPage(self)
+  end
+  if (self:oddPage() and SILE.scratch.headers.right) then
+    SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
+      SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
+      -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+      SILE.process(SILE.scratch.headers.right)
+      SILE.call("par")
+    end)
+  elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
+      SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
+        SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+        SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
+        SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
+          -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+        SILE.process(SILE.scratch.headers.left)
+        SILE.call("par")
+      end)
+  end
+  return plain.endPage(self)
+end
+
+
+SILE.registerCommand("left-running-head", function(options, content)
+  local closure = SILE.settings.wrap()
+  SILE.scratch.headers.left = function () closure(content) end
+end, "Text to appear on the top of the left page")
+
+SILE.registerCommand("right-running-head", function(options, content)
+  local closure = SILE.settings.wrap()
+  SILE.scratch.headers.right = function () closure(content) end
+end, "Text to appear on the top of the right page")
+
+
+SILE.registerCommand("sura", function (o,c)
+  local ch = o.index:match("%d+")
+  io.write("<S"..ch.."> ")
+  SILE.call("format-sura-name", o, {o.name})
+  SILE.call("format-sura-place", o, {o.place})
+  SILE.call("save-chapter-number", o, {o.index})
+  SILE.scratch.suraHeaderPage = true
+  SILE.process(c)
+  SILE.call("par")
+  SILE.call("open-double-page")
+end)
+
+SILE.registerCommand("aya", function (o,c)
+  if o.bismillah then
+    SILE.call("bismillah", {}, {o.bismillah})
+  end
+  SILE.call("save-verse-number", o, {o.index})
+  SILE.call("left-running-head", {}, function ()
+    SILE.settings.temporarily(function()
+      SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
+      SILE.call("font", {size="10pt", family="Gentium"}, function ()
+        SILE.call("first-reference")
+        SILE.typesetter:typeset("-")
+        SILE.call("last-reference")
+        SILE.call("hfill")
+      end)
+      SILE.typesetter:leaveHmode()
+    end)
+  end)
+  SILE.call("right-running-head", {}, function ()
+    SILE.settings.temporarily(function()
+      SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+      SILE.call("font", {size="10pt", family="Gentium"}, function ()
+        -- SILE.call("font", {style="italic"}, SILE.scratch.theChapter)
+        SILE.call("hfill")
+        SILE.call("first-reference")
+        SILE.typesetter:typeset("-")
+        SILE.call("last-reference")
+      end)
+      SILE.typesetter:leaveHmode()
+    end)
+  end)
+  SILE.typesetter:typeset(o.text)
+  SILE.call("par") --- ?
+end)
+
+return quran
