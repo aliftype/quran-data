@@ -183,7 +183,6 @@ SILE.registerCommand("aya", function (o,c)
     end)
   end)
   SILE.typesetter:typeset(o.text)
-  SILE.call("par") --- ?
 end)
 
 return quran
