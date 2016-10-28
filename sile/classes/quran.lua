@@ -2,6 +2,7 @@ local plain = SILE.require("classes/plain")
 local quran = plain { id = "quran", base = plain }
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 SILE.scratch.suraHeaderPage = false
+SILE.scratch.textOnPage = false
 
 function quran:singleColumnMaster()
   self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
@@ -79,6 +80,11 @@ quran.finish = function (self)
 end
 
 quran.endPage = function(self)
+  if SILE.scratch.textOnPage then
+    SILE.call("frame-rule")
+  end
+  SILE.scratch.textOnPage = false
+
   if SILE.scratch.suraHeaderPage then
     SILE.scratch.suraHeaderPage = false
     return plain.endPage(self)
@@ -105,6 +111,19 @@ quran.endPage = function(self)
   return plain.endPage(self)
 end
 
+local pdf = require("justenoughlibtexpdf")
+
+SILE.registerCommand("frame-rule", function(options, content)
+    local width = 0.8
+    local offset = 10
+    local f = SILE.getFrame("content")
+    pdf.colorpush(0.8,0,0)
+    SILE.outputters.libtexpdf.rule(f:left()-offset, f:top()-offset, f:width()+2*offset, width)
+    SILE.outputters.libtexpdf.rule(f:left()-offset, f:top()-offset, width, f:height()+2*offset)
+    SILE.outputters.libtexpdf.rule(f:right()+offset, f:top()-offset, width, f:height()+2*offset)
+    SILE.outputters.libtexpdf.rule(f:left()-offset, f:bottom()+offset, f:width()+2*offset, width)
+    pdf.colorpop()
+end)
 
 SILE.registerCommand("left-running-head", function(options, content)
   local closure = SILE.settings.wrap()
@@ -130,6 +149,7 @@ SILE.registerCommand("sura", function (o,c)
 end)
 
 SILE.registerCommand("aya", function (o,c)
+  SILE.scratch.textOnPage = true
   if o.bismillah then
     SILE.call("bismillah", {}, {o.bismillah})
   end
