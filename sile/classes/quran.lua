@@ -182,7 +182,7 @@ SILE.registerCommand("aya", function (o,c)
       SILE.typesetter:leaveHmode()
     end)
   end)
-  SILE.typesetter:typeset(o.text)
+  SILE.typesetter:typeset(o.text.." ")
 end)
 
 return quran
