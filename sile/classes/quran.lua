@@ -3,7 +3,6 @@ local quran = plain { id = "quran", base = plain }
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 SILE.settings.declare({name = "font.family", type = "string", default = "Amiri"})
 SILE.scratch.suraHeaderPage = false
-SILE.scratch.textOnPage = false
 SILE.scratch.counters.folio = { value = 1, display = "arabic-indic" }
 
 function quran:singleColumnMaster()
@@ -82,10 +81,7 @@ quran.finish = function (self)
 end
 
 quran.endPage = function(self)
-  if SILE.scratch.textOnPage then
-    SILE.call("frame-rule")
-  end
-  SILE.scratch.textOnPage = false
+  SILE.call("frame-rule")
 
   if SILE.scratch.suraHeaderPage then
     SILE.scratch.suraHeaderPage = false
@@ -151,7 +147,6 @@ SILE.registerCommand("sura", function (o,c)
 end)
 
 SILE.registerCommand("aya", function (o,c)
-  SILE.scratch.textOnPage = true
   if o.bismillah then
     SILE.call("bismillah", {}, {o.bismillah})
   end
