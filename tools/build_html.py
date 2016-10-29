@@ -46,9 +46,6 @@ htmlTemplate = Template("""<html>
 
 def BuildPage(textfile, metadata):
     text = textfile.read().strip()
-    text = text.replace(" \u06dd", "\u00a0\u06dd")
-    text = text.replace("\u06de ", "\u06de\u00a0")
-    text = text.replace(" \u06e9", "\u00a0\u06e9")
     num = int(path.splitext(path.basename(textfile.name))[0])
     name, place, basmala = metadata[num]
     html = htmlTemplate.render(text=text, name=name, place=place, basmala=basmala)
