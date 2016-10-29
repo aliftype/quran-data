@@ -1,8 +1,10 @@
 local plain = SILE.require("classes/plain")
 local quran = plain { id = "quran", base = plain }
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
+SILE.settings.declare({name = "font.family", type = "string", default = "Amiri"})
 SILE.scratch.suraHeaderPage = false
 SILE.scratch.textOnPage = false
+SILE.scratch.counters.folio = { value = 1, display = "arabic-indic" }
 
 function quran:singleColumnMaster()
   self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
