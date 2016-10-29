@@ -2,7 +2,6 @@ local plain = SILE.require("classes/plain")
 local quran = plain { id = "quran", base = plain }
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 SILE.settings.declare({name = "font.family", type = "string", default = "Amiri"})
-SILE.scratch.suraHeaderPage = false
 SILE.scratch.counters.folio = { value = 1, display = "arabic-indic" }
 
 function quran:singleColumnMaster()
@@ -83,10 +82,6 @@ end
 quran.endPage = function(self)
   SILE.call("frame-rule")
 
-  if SILE.scratch.suraHeaderPage then
-    SILE.scratch.suraHeaderPage = false
-    return plain.endPage(self)
-  end
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
       SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
@@ -140,10 +135,13 @@ SILE.registerCommand("sura", function (o,c)
   SILE.call("format-sura-name", o, {o.name})
   SILE.call("format-sura-place", o, {o.place})
   SILE.call("save-chapter-number", o, {o.index})
-  SILE.scratch.suraHeaderPage = true
   SILE.process(c)
   SILE.call("par")
-  SILE.call("open-double-page")
+  if ch == "1" then
+    SILE.typesetter:leaveHmode()
+    SILE.call("supereject")
+    SILE.typesetter:leaveHmode()
+  end
 end)
 
 SILE.registerCommand("aya", function (o,c)
