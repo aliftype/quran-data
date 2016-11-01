@@ -51,7 +51,7 @@ function quran:init()
   self:loadPackage("infonode")
   self:loadPackage("chapterverse")
   SILE.registerCommand("format-reference", function (o,c)
-    SILE.typesetter:typeset("S"..c.c.."A"..c.v)
+    SILE.typesetter:typeset("S"..c.chapter.."A"..c.verse)
   end)
 
   if self.options.twocolumns() then
