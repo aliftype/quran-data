@@ -7,7 +7,7 @@ SILE.scratch.counters.folio = { value = 1, display = "arab" }
 function quran:endPar(typesetter)
 end
 
-function quran:singleColumnMaster()
+function quran:masters()
   self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
     content = {left = "8.3%pw", right = "86%pw", top = "11.6%ph", bottom = "83.3%ph", direction = "RTL-TTB" },
     folio = {left = "left(content)", right = "right(content)", top = "bottom(content)+3%ph", bottom = "bottom(content)+5%ph", direction = "RTL-TTB" },
@@ -20,35 +20,6 @@ function quran:singleColumnMaster()
   }})
 end
 
-function quran:twoColumnMaster()
-  local gutterWidth = self.options.gutter or "3%pw"
-  self:defineMaster({ id = "right", firstContentFrame = "contentA", frames = {
-    title = {left = "left(contentA)", right = "right(contentB)", top="11.6%ph", height="0", bottom="top(contentA)", direction = "RTL-TTB" },
-    contentA = {left = "8.3%pw", right = "left(gutter)", top = "bottom(title)", bottom = "top(footnotesA)", next = "contentB", balanced = true, direction = "RTL-TTB" },
-    contentB = {left = "right(gutter)", width="width(contentA)", right = "86%pw", top = "bottom(title)", bottom = "top(contentB)", balanced = true, direction = "RTL-TTB" },
-    gutter = { left = "right(contentA)", right = "left(contentB)", width = gutterWidth, direction = "RTL-TTB" },
-    folio = {left = "left(contentA)", right = "right(contentB)", top = "bottom(contentB)+3%ph", bottom = "bottom(contentB)+5%ph", direction = "RTL-TTB" },
-    runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA)-8%ph", bottom = "top(contentA)-3%ph"},
-  }})
-  self:defineMaster({ id = "left", firstContentFrame = "contentA", frames = {
-    title = {left = "left(contentA)", right = "right(contentB)", top="11.6%ph", height="0", bottom="top(contentA)", direction = "RTL-TTB" },
-    contentA = {left = "14%pw", right = "left(gutter)", top = "bottom(title)", bottom = "top(footnotesA)", next = "contentB", balanced = true, direction = "RTL-TTB" },
-    contentB = {left = "right(gutter)", width="width(contentA)", right = "91.7%pw", top = "bottom(title)", bottom = "top(contentB)", balanced = true, direction = "RTL-TTB" },
-    gutter = { left = "right(contentA)", right = "left(contentB)", width = gutterWidth, direction = "RTL-TTB" },
-    folio = {left = "left(contentA)", right = "right(contentB)", top = "bottom(contentB)+3%ph", bottom = "bottom(contentB)+5%ph", direction = "RTL-TTB" },
-    runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA)-8%ph", bottom = "top(contentA)-3%ph"},
-  }})
-  -- Later we'll have an option for two fn frames
-  self:loadPackage("footnotes", { insertInto = "contentB", stealFrom = {"contentB"} } )
-  -- self:loadPackage("balanced-frames")
-end
-
-local _twocolumns
-quran.options.twocolumns = function (g)
-  if g then _twocolumns = g end
-  return _twocolumns
-end
-
 function quran:init()
   self:loadPackage("masters")
   self:loadPackage("infonode")
@@ -57,12 +28,7 @@ function quran:init()
     SILE.typesetter:typeset("S"..c.chapter.."A"..c.verse)
   end)
 
-  if self.options.twocolumns() then
-    self:twoColumnMaster()
-    SILE.settings.set("linebreak.tolerance", 9000)
-  else
-    self:singleColumnMaster()
-  end
+  self:masters()
   self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   self.pageTemplate = SILE.scratch.masters["right"]
   SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
