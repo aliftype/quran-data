@@ -1,7 +1,5 @@
 \begin[papersize=a5,class=quran]{document}
 \font[family=Amiri Quran,size=14pt]
-\set[parameter=linebreak.tolerance,value=10000]
-\set[parameter=document.baselineskip,value=3ex plus 2ex]
 
 \define[command=format-sura-name]{\center{\font[size=28pt,weight=800]{\process}}\bigskip} 
 
