@@ -9,8 +9,5 @@
 
 \define[command=bismillah]{\center{\font[size=12pt]{﷽}}\medskip}
 
-\script[src=packages/debug]
-\disable-pushback
-
 \include[src=../tanzil.xml,size=14pt]
 \end{document}
