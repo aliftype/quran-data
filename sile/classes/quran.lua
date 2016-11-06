@@ -24,6 +24,7 @@ function quran:init()
   self:loadPackage("masters")
   self:loadPackage("infonode")
   self:loadPackage("chapterverse")
+  self:loadPackage("linespacing")
   SILE.registerCommand("format-reference", function (o,c)
     SILE.typesetter:typeset("S"..c.chapter.."A"..c.verse)
   end)
@@ -32,8 +33,8 @@ function quran:init()
   self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   self.pageTemplate = SILE.scratch.masters["right"]
   SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
-  SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue("3ex plus 2ex"))
   SILE.settings.set("linebreak.tolerance", 10000)
+  SILE.settings.set("linespacing.method", "fixed")
   local p = plain.init(self)
   return p
 end

@@ -1,11 +1,12 @@
 \begin[papersize=a5,class=quran]{document}
+
 \font[family=Amiri Quran,size=14pt]
 \script[src=packages/linespacing]
 \set[parameter=linespacing.method,value=fixed]
 \set[parameter=linespacing.fixed.baselinedistance,value=50pt]
 \set[parameter=linebreak.tolerance,value=10000]
 
-\define[command=format-sura-name]{\center{\font[size=28pt,weight=800]{\process}}\nobreak\bigskip\nobreak} 
+\define[command=format-sura-name]{\center{\font[size=28pt,weight=800]{\process}}\bigskip} 
 
 \define[command=format-sura-place]{} % For now
 
