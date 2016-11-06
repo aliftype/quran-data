@@ -32,6 +32,8 @@ function quran:init()
   self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   self.pageTemplate = SILE.scratch.masters["right"]
   SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+  SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue("3ex plus 2ex"))
+  SILE.settings.set("linebreak.tolerance", 10000)
   local p = plain.init(self)
   return p
 end
