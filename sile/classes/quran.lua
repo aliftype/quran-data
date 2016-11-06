@@ -61,14 +61,14 @@ quran.endPage = function(self)
       SILE.call("par")
     end)
   elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
-      SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
-        SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-        SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
-        SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
-          -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-        SILE.process(SILE.scratch.headers.left)
-        SILE.call("par")
-      end)
+    SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
+      SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
+      -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+      SILE.process(SILE.scratch.headers.left)
+      SILE.call("par")
+    end)
   end
   return plain.endPage(self)
 end
@@ -76,15 +76,15 @@ end
 local pdf = require("justenoughlibtexpdf")
 
 SILE.registerCommand("frame-rule", function(options, content)
-    local width = 0.8
-    local offset = 10
-    local f = SILE.getFrame("content")
-    pdf.colorpush(0.8,0,0)
-    SILE.outputters.libtexpdf.rule(f:left()-offset, f:top()-offset, f:width()+2*offset, width)
-    SILE.outputters.libtexpdf.rule(f:left()-offset, f:top()-offset, width, f:height()+2*offset)
-    SILE.outputters.libtexpdf.rule(f:right()+offset, f:top()-offset, width, f:height()+2*offset)
-    SILE.outputters.libtexpdf.rule(f:left()-offset, f:bottom()+offset, f:width()+2*offset, width)
-    pdf.colorpop()
+  local width = 0.8
+  local offset = 10
+  local f = SILE.getFrame("content")
+  pdf.colorpush(0.8,0,0)
+  SILE.outputters.libtexpdf.rule(f:left()-offset, f:top()-offset, f:width()+2*offset, width)
+  SILE.outputters.libtexpdf.rule(f:left()-offset, f:top()-offset, width, f:height()+2*offset)
+  SILE.outputters.libtexpdf.rule(f:right()+offset, f:top()-offset, width, f:height()+2*offset)
+  SILE.outputters.libtexpdf.rule(f:left()-offset, f:bottom()+offset, f:width()+2*offset, width)
+  pdf.colorpop()
 end)
 
 SILE.registerCommand("left-running-head", function(options, content)
