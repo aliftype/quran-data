@@ -4,6 +4,9 @@ if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 SILE.settings.declare({name = "font.family", type = "string", default = "Amiri"})
 SILE.scratch.counters.folio = { value = 1, display = "arab" }
 
+function quran:endPar(typesetter)
+end
+
 function quran:singleColumnMaster()
   self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
     content = {left = "8.3%pw", right = "86%pw", top = "11.6%ph", bottom = "83.3%ph", direction = "RTL-TTB" },
@@ -132,6 +135,7 @@ end, "Text to appear on the top of the right page")
 SILE.registerCommand("sura", function (o,c)
   local ch = o.index:match("%d+")
   io.write("<S"..ch.."> ")
+  SILE.call("bigskip")
   SILE.call("format-sura-name", o, {o.name})
   SILE.call("format-sura-place", o, {o.place})
   SILE.call("save-chapter-number", o, {o.index})
