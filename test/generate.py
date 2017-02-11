@@ -16,6 +16,4 @@ for text_filename in sorted(glob.glob("../quran/???.txt")):
                          "--cluster-level=1"],
                         check=True, stdout=subprocess.PIPE)
   json_file = open(json_filename, "w")
-  for line in proc.stdout.split():
-      json_file.write(json.dumps(json.loads(line), indent=1))
-      json_file.write("\n")
+  json_file.write(proc.stdout.decode("utf-8"))
