@@ -1,2 +1,3 @@
 [diff "json"]
-	textconv = python -m json.tool
+	textconv = json-glib-format -p
+	cachetextconv = true
