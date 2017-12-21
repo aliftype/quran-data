@@ -13,6 +13,7 @@ for text_filename in sorted(glob.glob("../quran/???.txt")):
                          "--font-file=amiri-quran.ttf",
                          "--text-file=%s" % text_filename,
                          "--output-format=json",
+                         "--no-clusters",
                          "--cluster-level=1"],
                         check=True, stdout=subprocess.PIPE)
   os.makedirs(json_dirname, exist_ok=True)
