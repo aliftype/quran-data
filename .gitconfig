@@ -1,3 +1,0 @@
-[diff "json"]
-	textconv = json-glib-format -p
-	cachetextconv = true
