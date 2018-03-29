@@ -17,19 +17,19 @@
 أو مصحف مصلحة المساحة، أو مصحف الحفاظ، أو مصحف الاثني عشر سطرًا) في طبعته الرابعة
 المطبوعة عام ١٣٨٨ ه‍.
 
-This repository contains Quran as UTF-8 encoded plain text files, following the
-best Unicode practices as possible (no more font specific hacks, no repurposing
-of totally unrelated code points and so one), plus some tools to convert it
+This repository contains the Quran as UTF-8 encoded plain text files, following
+best Unicode practices as much possible (no more font specific hacks, no repurposing
+of totally unrelated code points and so on), plus some tools to convert it
 into other document formats.
 
 Some of the symbols used in this text were introduced in Unicode 6.1, so old
 applications or applications that haven’t been updated to Unicode 6.1 or newer
 might have issues displaying this text.
 
-**The text have not been formally reviewd, yet, so it may contain some errors.
-If you find any please, please report it.**
+**The text has not been formally reviewed yet, so it may contain some errors.
+If you find any, please report them.**
 
-Currently the text is best viewed using [Amiri Quran] font, as it has all the
+Currently the text is best viewed using the [Amiri Quran] font, as it has all the
 needed symbols and layout rules.
 
 [Amiri Quran]: http://www.amirifont.org
