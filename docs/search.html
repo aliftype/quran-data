@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>بحث قرآني</title>
+    <link rel="stylesheet" href="./search.css" />
+  </head>
+  <body>
+    <h1>بحث قرآني</h1>
+
+    <div class="status muted" id="status">يحمل سور القرآن...</div>
+
+    <div class="row">
+      <label>
+        عبارة البحث
+        <input
+          id="term"
+          type="text"
+          placeholder="أدخل عبارة البحث (مثال: كتب)" />
+      </label>
+      <label>
+        الموضع في المقطع
+        <select id="position">
+          <option value="any" selected>أي موضع</option>
+          <option value="isolated">منفصل</option>
+          <option value="initial">مبتدئ</option>
+          <option value="final">منتهي</option>
+          <option value="medial">متوسط</option>
+        </select>
+      </label>
+      <label>
+        <input id="ignoreMarks" type="checkbox" checked /> تجاهل الحركات
+      </label>
+      <label> <input id="ignoreDots" type="checkbox" /> تجاهل النقاط </label>
+      <button id="run">ابحث</button>
+    </div>
+
+    <table id="output" aria-live="polite"></table>
+
+    <script type="module">
+      import { load, search } from "./search.js";
+
+      const statusEl = document.getElementById("status");
+      const output = document.getElementById("output");
+      const runBtn = document.getElementById("run");
+      const termEl = document.getElementById("term");
+      const positionEl = document.getElementById("position");
+      const ignoreMarksEl = document.getElementById("ignoreMarks");
+      const ignoreDotsEl = document.getElementById("ignoreDots");
+
+      let quranData = null;
+
+      load()
+        .then((data) => {
+          quranData = data;
+          statusEl.textContent = `تم تحميل ١١٤ سورة.`;
+        })
+        .catch((err) => {
+          statusEl.textContent = "خطأ في تحميل السور: " + err;
+        });
+
+      function runSearch() {
+        output.textContent = "";
+        if (!quranData || !quranData.suras[0]) {
+          output.textContent = "لم تحمل سور القرآن بعد.";
+          return;
+        }
+        const term = termEl.value.trim();
+        if (!term) {
+          output.textContent = "أدخل عبارة للبحث عنها.";
+          return;
+        }
+        output.innerHTML = search({
+          suras: quranData.suras,
+          suraNames: quranData.suraNames,
+          term,
+          ignoreMarks: ignoreMarksEl.checked,
+          ignoreDots: ignoreDotsEl.checked,
+          position: positionEl.value,
+        });
+      }
+      runBtn.addEventListener("click", runSearch);
+      termEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") runSearch();
+      });
+    </script>
+  </body>
+</html>
