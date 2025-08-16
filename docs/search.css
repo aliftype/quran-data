@@ -60,7 +60,6 @@ table#output {
   border-radius: 8px;
   overflow: auto;
   max-height: 60vh;
-  font-family: "Amiri Quran", serif;
   font-size: 1.25rem;
   line-height: 2.5em;
 }
@@ -76,6 +75,10 @@ table#output {
   background: #e0e0e0;
   color: #333;
   width: 2.2em;
+}
+
+.ayah-text {
+  font-family: "Amiri Quran", serif;
 }
 
 mark {
