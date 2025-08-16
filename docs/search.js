@@ -475,6 +475,11 @@ function formatResults(results) {
     const pluralRules = new Intl.PluralRules("ar-EG");
 
     // Result Count
+    const totalCount = results.reduce(
+      (sum, sura) => sum + sura.ayat.reduce((s, a) => s + a.matches.length, 0),
+      0
+    );
+    const totalCountAr = arabicDigits.format(totalCount);
     const ayatCount = results.reduce((sum, sura) => sum + sura.ayat.length, 0);
     const ayatCountAr = arabicDigits.format(ayatCount);
     const surasCount = results.length;
@@ -499,11 +504,20 @@ function formatResults(results) {
       other: `${surasCountAr} سورة`,
     }[pluralRules.select(surasCount)];
 
+    const totalCountStr = {
+      zero: "لا نتائج",
+      one: "مرة واحدة",
+      two: "مرتين",
+      few: `${totalCountAr} مرات`,
+      many: `${totalCountAr} مرة`,
+      other: `${totalCountAr} مرة`,
+    }[pluralRules.select(totalCount)];
+
     // Add count row
     out += `
     <tr>
       <td colspan="2" class="search-count";">
-        عبارة البحث موجودة في ${ayatCountStr} في ${surasCountStr}
+        عبارة البحث موجودة ${totalCountStr} في ${ayatCountStr} في ${surasCountStr}
       </td>
     </tr>`;
 
