@@ -68,6 +68,11 @@ table#output {
   font-weight: bold;
 }
 
+.search-count {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
 .ayah-number {
   padding-inline-start: 0.5em;
   margin-inline-end: 0.5em;

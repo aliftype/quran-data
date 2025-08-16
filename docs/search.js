@@ -461,31 +461,73 @@ function highlight(text, positions) {
  * @returns {string} HTML table body containing formatted results with highlighted search terms
  */
 function formatResults(results) {
-  if (!results.length) return "(لا توجد نتائج)";
-  const arabicDigits = new Intl.NumberFormat("ar-EG", { useGrouping: false });
-
   let out = "<tbody>";
 
-  for (const group of results) {
-    const suraNumber = arabicDigits.format(group.sura);
+  if (!results.length) {
     out += `
+    <tr>
+      <td colspan="2" class="search-count";">
+         لا نتائج
+      </td>
+    </tr>`;
+  } else {
+    const arabicDigits = new Intl.NumberFormat("ar-EG", { useGrouping: false });
+    const pluralRules = new Intl.PluralRules("ar-EG");
+
+    // Result Count
+    const ayatCount = results.reduce((sum, sura) => sum + sura.ayat.length, 0);
+    const ayatCountAr = arabicDigits.format(ayatCount);
+    const surasCount = results.length;
+    const surasCountAr = arabicDigits.format(surasCount);
+
+    // Proper Arabic plurals
+    const ayatCountStr = {
+      zero: "آية",
+      one: "آية واحدة",
+      two: "آيتين",
+      few: `${ayatCountAr} آيات`,
+      many: `${ayatCountAr} آية`,
+      other: `${ayatCountAr} آية`,
+    }[pluralRules.select(ayatCount)];
+
+    const surasCountStr = {
+      zero: "سورة",
+      one: "سورة واحدة",
+      two: "سورتين",
+      few: `${surasCountAr} سور`,
+      many: `${surasCountAr} سورة`,
+      other: `${surasCountAr} سورة`,
+    }[pluralRules.select(surasCount)];
+
+    // Add count row
+    out += `
+    <tr>
+      <td colspan="2" class="search-count";">
+        عبارة البحث موجودة في ${ayatCountStr} في ${surasCountStr}
+      </td>
+    </tr>`;
+
+    for (const group of results) {
+      const suraNumber = arabicDigits.format(group.sura);
+      out += `
       <tr>
         <td colspan="2" class="sura-header">سورة ${group.name} (${suraNumber})</td>
       </tr>`;
 
-    for (const ayah of group.ayat) {
-      let displayText = ayah.text;
+      for (const ayah of group.ayat) {
+        let displayText = ayah.text;
 
-      // Apply highlighting if we have highlight data
-      if (ayah.matches.length > 0) {
-        displayText = highlight(ayah.text, ayah.matches);
-      }
+        // Apply highlighting if we have highlight data
+        if (ayah.matches.length > 0) {
+          displayText = highlight(ayah.text, ayah.matches);
+        }
 
-      out += `
+        out += `
       <tr>
         <td class="ayah-number">${arabicDigits.format(ayah.ayah)}</td>
         <td class="ayah-text">${displayText}</td>
       </tr>`;
+      }
     }
   }
 
