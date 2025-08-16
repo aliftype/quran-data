@@ -44,8 +44,9 @@ const CH = {
   FARSI_YEH: "\u06CC",
 
   // small letters
-  SMALL_YEH: "\u06E6",
+  SMALL_ALEF: "\u0670",
   SMALL_WAW: "\u06E5",
+  SMALL_YEH: "\u06E6",
 
   // symbols/marks
   HAMZA_BELOW: "\u0655",
@@ -110,6 +111,12 @@ const POSITIONAL_DOTLESS_FORM = new Set([
   CH.DOTLESS_QAF,
 ]);
 
+const SMALL_LETTERS_MAP = new Map([
+  [CH.SMALL_ALEF, CH.ALEF],
+  [CH.SMALL_WAW, CH.WAW],
+  [CH.SMALL_YEH, CH.YEH],
+]);
+
 /**
  * Loads all sura texts and meta info (names) from the quran directory.
  * Returns a Promise resolving to {suras: [string], suraNames: [string]}
@@ -148,7 +155,7 @@ export async function load() {
 }
 
 function normalizeDots(text) {
-  return normalize(text, false, true).text;
+  return normalize(text, false, true, false).text;
 }
 
 function canJoin(prev, next) {
@@ -245,12 +252,13 @@ function nextNonMark(text, index) {
  * @param {string} text - The text to process
  * @param {boolean} marks - Whether to remove Arabic marks and diacritics (except Hamza below)
  * @param {boolean} dots - Whether to normalize dotted from Arabic letters into dotless ones
+ * @param {boolean} smallLetters - Whether to ignore small letters
  * @returns {{text: string, indexMap: number[]}} Processed text and index mapping
  */
-function normalize(text, marks = false, dots = false) {
+function normalize(text, marks, dots, smallLetters) {
   if (!text) return { text: "", indexMap: [] };
 
-  if (!marks && !dots) {
+  if (!marks && !dots && !smallLetters) {
     // No processing needed, return original text with 1:1 mapping
     return {
       text,
@@ -268,12 +276,21 @@ function normalize(text, marks = false, dots = false) {
   chars.forEach((char, i) => {
     let keep = true;
 
+    // Handle normalizing small letters
+    // Kashida followed by small letter normalizes to the corresponding regular letter.
+    if (!smallLetters) {
+      const replacement = SMALL_LETTERS_MAP.get(char);
+      if (replacement !== undefined && chars[i - 1] === CH.KASHIDA) {
+        char = replacement;
+      }
+    }
+
     // Remove marks (except hamza below, we consider it a dot)
     if (marks && markRe.test(char) && char !== CH.HAMZA_BELOW) {
       keep = false;
     }
 
-    // Handle dot removal
+    // Handle dot normalization
     if (keep && dots) {
       const replacement = DOTLESS_MAP.get(char);
       if (replacement !== undefined) {
@@ -324,16 +341,30 @@ function normalize(text, marks = false, dots = false) {
  * @param {string} term - The search term to look for
  * @param {boolean} ignoreMarks - Whether to ignore Arabic marks and diacritics
  * @param {boolean} ignoreDots - Whether to ignore dots on Arabic letters
+ * @param {boolean} ignoreSmallLetters - Whether to ignore small letters
  * @param {string} position - Position constraint: "isolated", "initial", "final", "medial", or "any"
  * @returns {Array<{start: number, end: number}>|null} An array with matches in original text positions if found, null if not found
  */
-function searchAyah(ayah, term, ignoreMarks, ignoreDots, position) {
+function searchAyah(
+  ayah,
+  term,
+  ignoreMarks,
+  ignoreDots,
+  ignoreSmallLetters,
+  position
+) {
   const { text: processedAyah, indexMap } = normalize(
     ayah,
     ignoreMarks,
-    ignoreDots
+    ignoreDots,
+    ignoreSmallLetters
   );
-  const processedTerm = normalize(term, ignoreMarks, ignoreDots).text;
+  const processedTerm = normalize(
+    term,
+    ignoreMarks,
+    ignoreDots,
+    ignoreSmallLetters
+  ).text;
 
   const matches = [];
   let index = 0;
@@ -392,6 +423,7 @@ function searchAyah(ayah, term, ignoreMarks, ignoreDots, position) {
  * @param {string} term - The search term to look for
  * @param {boolean} ignoreMarks - Whether to ignore Arabic marks and diacritics during search
  * @param {boolean} ignoreDots - Whether to ignore dots on Arabic letters during search
+ * @param {boolean} ignoreSmallLetters - Whether to ignore small letters during search
  * @param {string} position - Position constraint: "isolated", "initial", "final", "medial", or "any"
  * @returns {string} HTML table body containing formatted results with highlighted search terms
  */
@@ -401,13 +433,21 @@ export function search({
   term,
   ignoreMarks,
   ignoreDots,
+  ignoreSmallLetters,
   position,
 }) {
   let results = [];
   suras.forEach((suraText, i) => {
     const ayat = [];
     suraText.split("\n").forEach((ayah, j) => {
-      const matches = searchAyah(ayah, term, ignoreMarks, ignoreDots, position);
+      const matches = searchAyah(
+        ayah,
+        term,
+        ignoreMarks,
+        ignoreDots,
+        ignoreSmallLetters,
+        position
+      );
       if (matches) {
         ayat.push({
           ayah: j + 1,

@@ -46,6 +46,9 @@
         <input id="ignoreMarks" type="checkbox" checked /> تجاهل الحركات
       </label>
       <label> <input id="ignoreDots" type="checkbox" /> تجاهل النقاط </label>
+      <label>
+        <input id="ignoreSmallLetters" type="checkbox" /> تجاهل الحروف الصغيرة
+      </label>
       <button id="run">ابحث</button>
     </div>
 
@@ -61,6 +64,8 @@
       const positionEl = document.getElementById("position");
       const ignoreMarksEl = document.getElementById("ignoreMarks");
       const ignoreDotsEl = document.getElementById("ignoreDots");
+      const ignoreSmallLettersEl =
+        document.getElementById("ignoreSmallLetters");
 
       let quranData = null;
 
@@ -90,6 +95,7 @@
           term,
           ignoreMarks: ignoreMarksEl.checked,
           ignoreDots: ignoreDotsEl.checked,
+          ignoreSmallLetters: ignoreSmallLettersEl.checked,
           position: positionEl.value,
         });
       }
