@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Amiri Quran";
+  src: url("AmiriQuran.ttf");
+}
+
 :root {
   color-scheme: light dark;
 }
@@ -54,7 +59,7 @@ table#output {
   border-radius: 8px;
   overflow: auto;
   max-height: 60vh;
-  font-family: Amiri, serif;
+  font-family: "Amiri Quran", serif;
   font-size: 1.25rem;
   line-height: 2.5em;
 }
