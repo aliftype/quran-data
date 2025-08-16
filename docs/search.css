@@ -51,6 +51,7 @@ button {
 
 .status {
   margin: 0.5rem 0 1rem;
+  display: none; /* Initially hidden */
 }
 
 table#output {
