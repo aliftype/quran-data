@@ -42,15 +42,20 @@
           <option value="medial">متوسط</option>
         </select>
       </label>
-      <label>
-        <input id="ignoreMarks" type="checkbox" checked /> تجاهل الحركات
+      <label
+        title="تجاهل الحركات (علامات التشكيل) أثناء البحث. مثلًا البحث عن «كُتُب» سيجد «كَتَبَ» و«كُتِبَ»">
+        <input id="ignoreMarks" type="checkbox" checked />
+        تجاهل الحركات
       </label>
-      <label>
-        <input id="ignoreDots" type="checkbox" checked /> تجاهل النقاط
+      <label
+        title="تجاهل نقاط الحروف أثناء البحث. مثلًا البحث عن «ب» سيجد أيضاً «ت» و«ث»">
+        <input id="ignoreDots" type="checkbox" checked />
+        تجاهل النقاط
       </label>
-      <label>
-        <input id="ignoreSmallLetters" type="checkbox" checked /> تجاهل الحروف
-        الصغيرة
+      <label
+        title="تجاهل الحروف الصغيرة أثناء البحث. مثلًا البحث عن «هـٰذا» سيجد «هذا»">
+        <input id="ignoreSmallLetters" type="checkbox" checked />
+        تجاهل الحروف الصغيرة
       </label>
       <button id="run">ابحث</button>
     </div>
