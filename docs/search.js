@@ -353,13 +353,13 @@ function searchAyah(
   ignoreSmallLetters,
   position
 ) {
-  const { text: processedAyah, indexMap } = normalize(
+  const { text: normalizedAyah, indexMap } = normalize(
     ayah,
     ignoreMarks,
     ignoreDots,
     ignoreSmallLetters
   );
-  const processedTerm = normalize(
+  const normalizedTerm = normalize(
     term,
     ignoreMarks,
     ignoreDots,
@@ -368,21 +368,21 @@ function searchAyah(
 
   const matches = [];
   let index = 0;
-  while (index < processedAyah.length) {
-    const pos = processedAyah.indexOf(processedTerm, index);
+  while (index < normalizedAyah.length) {
+    const pos = normalizedAyah.indexOf(normalizedTerm, index);
     if (pos === -1) break;
 
     let start = pos;
-    let end = pos + processedTerm.length;
+    let end = pos + normalizedTerm.length;
 
-    let first = processedAyah[start];
-    let last = processedAyah[end - 1];
-    let prev = previousNonMark(processedAyah, start);
-    let next = nextNonMark(processedAyah, end - 1);
-    first = normalizeDots(first);
-    last = normalizeDots(last);
-    prev = normalizeDots(prev);
-    next = normalizeDots(next);
+    // We now need to find the first and last letter without dots and marks to check
+    // Arabic joining rules
+    const processedTerm = normalize(normalizedTerm, true, true, false).text;
+    const first = processedTerm[0];
+    const last = processedTerm[processedTerm.length - 1];
+
+    const prev = normalizeDots(previousNonMark(normalizedAyah, start));
+    const next = normalizeDots(nextNonMark(normalizedAyah, end - 1));
     let found = false;
     switch (position) {
       case "initial":
