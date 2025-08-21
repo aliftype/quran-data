@@ -35,11 +35,27 @@
       <label>
         الموضع في المقطع
         <select id="position">
-          <option value="any" selected>أي موضع</option>
-          <option value="isolated">منفصل</option>
-          <option value="initial">مبتدئ</option>
-          <option value="medial">متوسط</option>
-          <option value="final">منتهي</option>
+          <option title="أي موضع في المقطع" value="any" selected>
+            أي موضع
+          </option>
+          <option
+            title="عبارة البحث لا تتصل بما قبلها ولا بما بعدها"
+            value="isolated">
+            منفصل
+          </option>
+          <option
+            title="عبارة البحث لا تتصل بما قبلها وتتصل بما بعدها"
+            value="initial">
+            مبتدئ
+          </option>
+          <option title="عبارة البحث تتصل بما قبلها وما بعدها" value="medial">
+            متوسط
+          </option>
+          <option
+            title="عبارة البحث تتصل بما قبلها ولا تتصل بما بعدها"
+            value="final">
+            منتهي
+          </option>
         </select>
       </label>
       <label
