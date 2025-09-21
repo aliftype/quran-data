@@ -255,7 +255,7 @@ function nextNonMark(text, index) {
  * @param {boolean} smallLetters - Whether to ignore small letters
  * @returns {{text: string, indexMap: number[]}} Processed text and index mapping
  */
-function normalize(text, marks, dots, smallLetters) {
+function normalize(text, marks, dots, smallLetters, position) {
   if (!text) return { text: "", indexMap: [] };
 
   if (!marks && !dots && !smallLetters) {
@@ -306,25 +306,35 @@ function normalize(text, marks, dots, smallLetters) {
   });
 
   // Apply position-based replacements
-  chars.forEach((char, i) => {
+  processed.forEach((char, i) => {
     if (POSITIONAL_DOTLESS_FORM.has(char)) {
-      let prev = previousNonMark(text, i);
-      let next = nextNonMark(text, i);
+      let prev = previousNonMark(processed, i);
+      let next = nextNonMark(processed, i);
+
+      let initial, medial;
+      if (i == 0 && (position === "initial" || position === "isolated"))
+        initial = true;
+      else initial = isInitial(char, prev, char, next);
+
+      if (
+        i == processed.length - 1 &&
+        (position === "final" || position === "isolated")
+      )
+        medial = false;
+      else if (position === "medial") medial = true;
+      else medial = isMedial(char, prev, char, next);
 
       // Only apply replacement if character is in initial or medial position
-      if (
-        isInitial(char, prev, char, next) ||
-        isMedial(char, prev, char, next)
-      ) {
+      if (initial || medial) {
         switch (char) {
           // Initial/Medial Noon or Yeh -> Beh
           case CH.DOTLESS_NOON:
           case CH.DOTLESS_YEH:
-            char = CH.DOTLESS_BEH;
+            processed[i] = CH.DOTLESS_BEH;
             break;
           // Initial/Medial Qaf -> Feh
           case CH.DOTLESS_QAF:
-            char = CH.DOTLESS_FEH;
+            processed[i] = CH.DOTLESS_FEH;
             break;
         }
       }
@@ -363,7 +373,8 @@ function searchAyah(
     term,
     ignoreMarks,
     ignoreDots,
-    ignoreSmallLetters
+    ignoreSmallLetters,
+    position
   ).text;
 
   const matches = [];
